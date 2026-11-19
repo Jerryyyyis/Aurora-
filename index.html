@@ -1,88 +1,378 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#111426">
-<title>Aurora – Dein Chat</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aurora – Deine KI</title>
 <style>
-:root{--bg:#0d1020;--panel:#171b31;--panel2:#202642;--text:#f4f5ff;--muted:#aab0ca;--accent:#a78bfa;--accent2:#67e8f9;--user:#34305c;--border:#303653}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#22264a 0%,var(--bg) 58%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
-.app{max-width:760px;margin:auto;min-height:100vh;display:flex;flex-direction:column;padding:0 14px}
-header{display:flex;align-items:center;gap:12px;padding:18px 4px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(13,16,32,.94);backdrop-filter:blur(12px);z-index:2}
-.logo{width:43px;height:43px;border-radius:15px;background:linear-gradient(135deg,#8b5cf6,#22d3ee);display:grid;place-items:center;font-size:24px;box-shadow:0 5px 22px #7c3aed55}
-.brand{flex:1}.brand h1{font-size:20px;margin:0;letter-spacing:.3px}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
-button{font:inherit;cursor:pointer}.topbtn{background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:9px 11px}
-.notice{margin:14px 0 6px;padding:10px 12px;border:1px solid #5b4b8d;background:#201c3b;border-radius:13px;color:#dcd5ff;font-size:12px;line-height:1.45}
-main{flex:1;padding:12px 0 18px}.welcome{text-align:center;padding:28px 10px 20px}.orb{font-size:48px;filter:drop-shadow(0 0 18px #9d7aff88)}.welcome h2{margin:8px 0 6px;font-size:24px}.welcome p{color:var(--muted);margin:0 auto;max-width:440px;line-height:1.5;font-size:14px}
-.suggestions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:18px}.suggestions button{background:var(--panel);color:#e7e7ff;border:1px solid var(--border);border-radius:18px;padding:9px 12px;font-size:13px}
-#messages{display:flex;flex-direction:column;gap:12px}.msg{max-width:88%;padding:12px 14px;border-radius:17px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px}.msg.user{align-self:flex-end;background:var(--user);border:1px solid #51488a;border-bottom-right-radius:5px}.msg.bot{align-self:flex-start;background:var(--panel);border:1px solid var(--border);border-bottom-left-radius:5px}.who{font-size:11px;color:var(--muted);margin-bottom:4px}
-.composer{position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 18%);padding:14px 0 max(16px,env(safe-area-inset-bottom))}
-.entry{display:flex;gap:8px;background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:8px;align-items:flex-end}
-textarea{flex:1;resize:none;max-height:120px;min-height:42px;background:transparent;border:0;outline:0;color:var(--text);font:inherit;padding:9px 7px;font-size:15px}
-.send{border:0;border-radius:13px;background:linear-gradient(135deg,#8b5cf6,#0891b2);color:white;padding:11px 15px;font-weight:700}
-.smallprint{text-align:center;color:var(--muted);font-size:11px;margin:8px 0 0}
-.tools{display:flex;gap:8px;justify-content:space-between;margin-top:9px}.tools button{font-size:12px;color:var(--muted);background:transparent;border:0;padding:7px}
-.light{--bg:#f3f4ff;--panel:#fff;--panel2:#e8eaff;--text:#20223a;--muted:#626985;--user:#e2dcff;--border:#d6d9ef}
-.light header{background:rgba(243,244,255,.94)}.light .notice{background:#eeebff;color:#453b75;border-color:#c9bfff}.light .suggestions button{color:#30324e}
-@media(min-width:650px){.app{padding:0 22px}.msg{max-width:78%}}
+:root {
+  --bg:#0d1020;--panel:#171b31;--text:#f4f5ff;
+  --muted:#aab0ca;--accent:#a78bfa;--border:#303653;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+font-family:system-ui,sans-serif}
+body.light{--bg:#f3f4ff;--panel:#fff;--text:#20223a;
+--muted:#626985;--border:#d6d9ef}
+header{padding:16px;display:flex;align-items:center;
+justify-content:space-between;background:var(--panel);
+border-bottom:1px solid var(--border)}
+header h1{margin:0;font-size:22px}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer;border:1px solid var(--border);
+background:var(--panel);color:var(--text);
+padding:10px;border-radius:12px}
+button.primary{background:var(--accent);color:#17132b}
+nav{display:flex;gap:7px;padding:12px;overflow-x:auto;
+border-bottom:1px solid var(--border)}
+nav button{white-space:nowrap}
+main{max-width:760px;margin:auto;padding:16px}
+.panel{display:none}
+.panel.active{display:block}
+.card{background:var(--panel);border:1px solid var(--border);
+border-radius:16px;padding:15px;margin:12px 0}
+input,textarea,select{width:100%;padding:12px;margin:7px 0;
+border-radius:10px;border:1px solid var(--border);
+background:var(--panel);color:var(--text)}
+textarea{min-height:90px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.grid button{min-height:85px}
+.msg{padding:12px;margin:9px 0;border-radius:14px;
+background:var(--panel);white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.user{margin-left:12%;background:#34305c}
+.small{font-size:12px;color:var(--muted)}
+.item{padding:12px;border-bottom:1px solid var(--border)}
+.item button{margin:5px}
+#messages{margin:15px 0}
+@media(max-width:420px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="app" id="app">
 <header>
- <div class="logo">✦</div>
- <div class="brand"><h1>Aurora</h1><p>Dein persönlicher Chat-Begleiter</p></div>
- <button class="topbtn" id="themeBtn" aria-label="Design wechseln">☼</button>
- <button class="topbtn" id="newBtn">＋ Neu</button>
+  <h1>✦ Aurora</h1>
+  <button onclick="toggleTheme()">☼ Design</button>
 </header>
-<div class="notice">Offline-Demo: Aurora speichert deinen Chat auf diesem Gerät. Sie ist noch nicht mit einer echten KI verbunden und verwendet Beispielantworten.</div>
+
+<nav>
+  <button onclick="show('home')">🏠 Start</button>
+  <button onclick="show('chat')">💬 Chat</button>
+  <button onclick="show('memory')">🧠 Gedächtnis</button>
+  <button onclick="show('planner')">📅 Planer</button>
+  <button onclick="show('creative')">🎨 Kreativ</button>
+  <button onclick="show('learning')">📚 Lernen</button>
+  <button onclick="show('projects')">📁 Projekte</button>
+  <button onclick="show('coding')">💻 Code</button>
+  <button onclick="show('settings')">⚙️</button>
+</nav>
+
 <main>
- <section class="welcome" id="welcome">
-  <div class="orb">✧</div><h2>Hallo! Ich bin Aurora.</h2>
-  <p>Schön, dass du da bist. Schreib mir etwas oder probiere eine der Ideen aus.</p>
-  <div class="suggestions">
-   <button data-prompt="Erzähl mir einen interessanten Fakt!">💡 Interessanter Fakt</button>
-   <button data-prompt="Hilf mir bei einer Idee für eine Geschichte.">📖 Geschichte</button>
-   <button data-prompt="Was kann ich heute Kreatives machen?">🎨 Kreative Idee</button>
+<section id="home" class="panel active">
+  <h2>Hallo! Ich bin Aurora ✨</h2>
+  <p>Was möchtest du heute machen?</p>
+  <div class="grid">
+    <button onclick="show('chat')">💬 Chat öffnen</button>
+    <button onclick="show('memory')">🧠 Gedächtnis</button>
+    <button onclick="show('planner')">📅 Tagesplaner</button>
+    <button onclick="show('creative')">🎨 Kreativ-Studio</button>
+    <button onclick="show('learning')">📚 Lern-Modus</button>
+    <button onclick="show('projects')">📁 Projekte</button>
+    <button onclick="show('coding')">💻 Programmieren</button>
+    <button onclick="show('settings')">⚙️ Einstellungen</button>
   </div>
- </section>
- <section id="messages" aria-live="polite"></section>
+  <div class="card">
+    <h3>Dein Aurora-Hinweis</h3>
+    <p class="small">Deine Einträge werden lokal in diesem Browser gespeichert.</p>
+  </div>
+</section>
+
+<section id="chat" class="panel">
+  <h2>💬 Aurora Chat</h2>
+  <div class="card small">Offline-Demo: Aurora verwendet noch Beispielantworten und ist nicht mit einer echten KI verbunden.</div>
+  <div id="messages"></div>
+  <textarea id="chatInput" placeholder="Schreibe Aurora eine Nachricht..."></textarea>
+  <button class="primary" onclick="sendChat()">Senden</button>
+  <button onclick="clearChat()">Chat löschen</button>
+</section>
+
+<section id="memory" class="panel">
+  <h2>🧠 Mein Gedächtnis</h2>
+  <textarea id="memoryInput" placeholder="Was soll Aurora speichern?"></textarea>
+  <button class="primary" onclick="addMemory()">Speichern</button>
+  <div id="memoryList"></div>
+</section>
+
+<section id="planner" class="panel">
+  <h2>📅 Tagesplaner</h2>
+  <input id="taskInput" placeholder="Neue Aufgabe">
+  <input id="taskTime" type="time">
+  <button class="primary" onclick="addTask()">Aufgabe hinzufügen</button>
+  <div id="taskList"></div>
+</section>
+
+<section id="creative" class="panel">
+  <h2>🎨 Kreativ-Studio</h2>
+  <select id="creativeType">
+    <option>Geschichte</option>
+    <option>Figur</option>
+    <option>Idee</option>
+    <option>Welt</option>
+  </select>
+  <input id="creativeTitle" placeholder="Titel deiner Idee">
+  <textarea id="creativeText" placeholder="Beschreibe deine Idee..."></textarea>
+  <button class="primary" onclick="saveCreative()">Idee speichern</button>
+  <div id="creativeList"></div>
+</section>
+
+<section id="learning" class="panel">
+  <h2>📚 Lern-Modus</h2>
+  <input id="question" placeholder="Frage oder Begriff">
+  <textarea id="answer" placeholder="Antwort oder Erklärung"></textarea>
+  <button class="primary" onclick="addCard()">Lernkarte speichern</button>
+  <div id="learningList"></div>
+</section>
+
+<section id="projects" class="panel">
+  <h2>📁 Meine Projekte</h2>
+  <input id="projectName" placeholder="Projektname">
+  <textarea id="projectDescription" placeholder="Beschreibung"></textarea>
+  <button class="primary" onclick="addProject()">Projekt erstellen</button>
+  <div id="projectList"></div>
+</section>
+
+<section id="coding" class="panel">
+  <h2>💻 Code Studio</h2>
+  <select id="codeLanguage">
+    <option>HTML</option><option>CSS</option>
+    <option>JavaScript</option><option>Python</option>
+  </select>
+  <textarea id="codeInput" placeholder="Dein Code..."></textarea>
+  <button class="primary" onclick="saveCode()">Code speichern</button>
+  <div id="codeList"></div>
+  <p class="small">Der Editor speichert Code, führt ihn aber noch nicht aus.</p>
+</section>
+
+<section id="settings" class="panel">
+  <h2>⚙️ Einstellungen</h2>
+  <label>Akzentfarbe</label>
+  <input type="color" id="accent" value="#a78bfa"
+  onchange="setAccent(this.value)">
+  <button onclick="toggleTheme()">Hell-/Dunkelmodus wechseln</button>
+  <button onclick="resetData()">Alle Aurora-Daten löschen</button>
+</section>
 </main>
-<div class="composer">
- <div class="entry"><textarea id="input" rows="1" placeholder="Schreibe Aurora eine Nachricht…" aria-label="Nachricht"></textarea><button class="send" id="sendBtn">Senden</button></div>
- <div class="tools"><button id="clearBtn">Chat löschen</button><span style="font-size:12px;color:var(--muted);padding:7px">↵ Senden</span></div>
- <p class="smallprint">Deine Nachrichten bleiben in diesem Browser auf deinem Gerät.</p>
-</div>
-</div>
+
 <script>
-const KEY='aurora_demo_messages_v2', THEME='aurora_demo_theme_v2';
-const messagesEl=document.getElementById('messages'), welcome=document.getElementById('welcome'), input=document.getElementById('input');
-let messages=[];
-try{messages=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(messages))messages=[]}catch(e){messages=[]}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(messages))}catch(e){}}
-function addBubble(item){const wrap=document.createElement('div');wrap.className='msg '+(item.role==='user'?'user':'bot');const who=document.createElement('div');who.className='who';who.textContent=item.role==='user'?'Du':'Aurora';const body=document.createElement('div');body.textContent=item.text;wrap.append(who,body);messagesEl.appendChild(wrap)}
-function render(){messagesEl.innerHTML='';welcome.style.display=messages.length?'none':'block';messages.forEach(addBubble);window.scrollTo(0,document.body.scrollHeight)}
-function replyFor(text){const t=text.toLowerCase();
- if(t.includes('hallo')||t.includes('hi')||t.includes('hey'))return 'Hallo! Schön, dass du mit mir schreibst. 🌟 Ich bin noch eine Offline-Demo, aber ich kann dir ein paar Beispielantworten geben.';
- if(t.includes('fakt'))return 'Ein Oktopus hat drei Herzen und blaues Blut. 🐙 Das ist ein spannender Fakt aus der Natur!';
- if(t.includes('geschichte'))return 'Gern! Eine Idee: In einer Stadt, in der Sterne jede Nacht ihre Plätze wechseln, entdeckt ein neugieriges Kind eine Sternenkarte, die morgen zeigt. ✨';
- if(t.includes('kreativ')||t.includes('machen'))return 'Wie wäre es mit einem kleinen Fantasie-Comic, einer selbst erfundenen Flagge oder einer Playlist für einen erfundenen Film? 🎨';
- if(t.includes('aurora'))return 'Ich bin Aurora – im Moment noch die Offline-Version. Später können wir mich mit einer echten KI verbinden. 💜';
- if(t.includes('danke'))return 'Sehr gern! 💜';
- return 'Danke für deine Nachricht! 💜 Ich kann sie in dieser Demo leider noch nicht wirklich verstehen. Meine Antworten sind momentan Beispiele. Für freie, intelligente Antworten müssen wir später eine echte KI sicher anschließen.';
+const $ = id => document.getElementById(id);
+
+function read(key) {
+  try { return JSON.parse(localStorage.getItem(key)||"[]"); }
+  catch { return []; }
 }
-function send(text){const value=(text??input.value).trim();if(!value)return;messages.push({role:'user',text:value});messages.push({role:'bot',text:replyFor(value)});save();input.value='';input.style.height='auto';render()}
-document.getElementById('sendBtn').addEventListener('click',()=>send());
-input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px'});
-input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
-document.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>send(b.dataset.prompt)));
-document.getElementById('newBtn').addEventListener('click',()=>{messages=[];save();render();input.focus()});
-document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm('Möchtest du den Chatverlauf auf diesem Gerät löschen?')){messages=[];save();render()}});
-function setTheme(light){document.body.classList.toggle('light',light);try{localStorage.setItem(THEME,light?'light':'dark')}catch(e){}}
-let light=false;try{light=localStorage.getItem(THEME)==='light'}catch(e){}setTheme(light);
-document.getElementById('themeBtn').addEventListener('click',()=>{light=!light;setTheme(light)});
-render();
+function write(key,data) {
+  localStorage.setItem(key,JSON.stringify(data));
+}
+function show(id) {
+  document.querySelectorAll(".panel").forEach(p=>{
+    p.classList.toggle("active",p.id===id);
+  });
+  if(id==="chat") renderChat();
+  if(id==="memory") renderMemories();
+  if(id==="planner") renderTasks();
+  if(id==="creative") renderCreative();
+  if(id==="learning") renderCards();
+  if(id==="projects") renderProjects();
+  if(id==="coding") renderCode();
+}
+function toggleTheme() {
+  document.body.classList.toggle("light");
+  localStorage.setItem("aurora_theme",
+    document.body.classList.contains("light")?"light":"dark");
+}
+if(localStorage.getItem("aurora_theme")==="light")
+  document.body.classList.add("light");
+
+function setAccent(color) {
+  document.documentElement.style.setProperty("--accent",color);
+  localStorage.setItem("aurora_accent",color);
+}
+const savedAccent=localStorage.getItem("aurora_accent");
+if(savedAccent){$("accent").value=savedAccent;setAccent(savedAccent);}
+
+// CHAT
+function renderChat() {
+  $("messages").replaceChildren();
+  read("aurora_chat").forEach(m=>{
+    const d=document.createElement("div");
+    d.className="msg "+m.role;
+    d.textContent=(m.role==="user"?"Du: ":"Aurora: ")+m.text;
+    $("messages").appendChild(d);
+  });
+}
+function sendChat() {
+  const text=$("chatInput").value.trim();
+  if(!text)return;
+  const data=read("aurora_chat");
+  data.push({role:"user",text});
+  data.push({role:"bot",text:reply(text)});
+  write("aurora_chat",data);
+  $("chatInput").value="";
+  renderChat();
+}
+function reply(text) {
+  const t=text.toLowerCase();
+  if(t.includes("hallo")||t.includes("hi"))return "Hallo! Schön, dass du da bist. 💜";
+  if(t.includes("fakt"))return "Ein Oktopus hat drei Herzen. 🐙";
+  if(t.includes("geschichte"))return "Eine Idee: Eine Stadt, in der Sterne jede Nacht ihre Plätze wechseln. ✨";
+  return "Danke für deine Nachricht! Ich bin noch eine Offline-Demo. Für freie Antworten brauche ich später eine echte KI-Anbindung.";
+}
+function clearChat() {
+  if(confirm("Chat wirklich löschen?")) {
+    localStorage.removeItem("aurora_chat");renderChat();
+  }
+}
+
+// GEDÄCHTNIS
+function addMemory() {
+  const text=$("memoryInput").value.trim();if(!text)return;
+  const data=read("aurora_memory");
+  data.push({id:Date.now(),text});
+  write("aurora_memory",data);$("memoryInput").value="";
+  renderMemories();
+}
+function renderMemories() {
+  renderItems("memoryList","aurora_memory","text");
+}
+
+// PLANER
+function addTask() {
+  const text=$("taskInput").value.trim();if(!text)return;
+  const data=read("aurora_tasks");
+  data.push({id:Date.now(),text,time:$("taskTime").value,done:false});
+  write("aurora_tasks",data);$("taskInput").value="";
+  renderTasks();
+}
+function renderTasks() {
+  const box=$("taskList");box.replaceChildren();
+  read("aurora_tasks").forEach(t=>{
+    const d=document.createElement("div");d.className="item";
+    const label=document.createElement("label");
+    const check=document.createElement("input");
+    check.type="checkbox";check.checked=t.done;check.style.width="auto";
+    check.onchange=()=>{
+      const all=read("aurora_tasks");
+      const x=all.find(a=>a.id===t.id);if(x)x.done=check.checked;
+      write("aurora_tasks",all);
+    };
+    label.append(check,document.createTextNode(" "+(t.time||"")+
+      " "+t.text));
+    d.appendChild(label);box.appendChild(d);
+    addDelete(d,"aurora_tasks",t.id,renderTasks);
+  });
+}
+
+// KREATIV
+function saveCreative() {
+  const title=$("creativeTitle").value.trim();
+  const text=$("creativeText").value.trim();if(!title||!text)return;
+  const data=read("aurora_creative");
+  data.push({id:Date.now(),title,text,type:$("creativeType").value});
+  write("aurora_creative",data);
+  $("creativeTitle").value="";$("creativeText").value="";
+  renderCreative();
+}
+function renderCreative() {
+  renderItems("creativeList","aurora_creative","title","text");
+}
+
+// LERNKARTEN
+function addCard() {
+  const q=$("question").value.trim(),a=$("answer").value.trim();
+  if(!q||!a)return;
+  const data=read("aurora_cards");
+  data.push({id:Date.now(),question:q,answer:a});
+  write("aurora_cards",data);
+  $("question").value="";$("answer").value="";
+  renderCards();
+}
+function renderCards() {
+  const box=$("learningList");box.replaceChildren();
+  read("aurora_cards").forEach(c=>{
+    const d=document.createElement("div");d.className="item";
+    const q=document.createElement("strong");q.textContent=c.question;
+    const b=document.createElement("button");b.textContent="Antwort zeigen";
+    const a=document.createElement("p");a.hidden=true;a.textContent=c.answer;
+    b.onclick=()=>a.hidden=!a.hidden;
+    d.append(q,b,a);box.appendChild(d);
+    addDelete(d,"aurora_cards",c.id,renderCards);
+  });
+}
+
+// PROJEKTE
+function addProject() {
+  const name=$("projectName").value.trim();if(!name)return;
+  const data=read("aurora_projects");
+  data.push({id:Date.now(),name,description:$("projectDescription").value});
+  write("aurora_projects",data);
+  $("projectName").value="";$("projectDescription").value="";
+  renderProjects();
+}
+function renderProjects() {
+  renderItems("projectList","aurora_projects","name","description");
+}
+
+// CODE
+function saveCode() {
+  const code=$("codeInput").value;if(!code.trim())return;
+  const data=read("aurora_code");
+  data.push({id:Date.now(),language:$("codeLanguage").value,code});
+  write("aurora_code",data);$("codeInput").value="";
+  renderCode();
+}
+function renderCode() {
+  const box=$("codeList");box.replaceChildren();
+  read("aurora_code").forEach(c=>{
+    const d=document.createElement("div");d.className="item";
+    const title=document.createElement("strong");
+    title.textContent=c.language;
+    const pre=document.createElement("pre");pre.textContent=c.code;
+    const b=document.createElement("button");b.textContent="Laden";
+    b.onclick=()=>{$("codeLanguage").value=c.language;$("codeInput").value=c.code;};
+    d.append(title,pre,b);box.appendChild(d);
+    addDelete(d,"aurora_code",c.id,renderCode);
+  });
+}
+
+// GEMEINSAME ANZEIGE UND LÖSCHEN
+function renderItems(container,key,title,description="") {
+  const box=$(container);box.replaceChildren();
+  read(key).forEach(item=>{
+    const d=document.createElement("div");d.className="item";
+    const h=document.createElement("strong");
+    h.textContent=item[title];d.appendChild(h);
+    if(description&&item[description]){
+      const p=document.createElement("p");
+      p.textContent=item[description];d.appendChild(p);
+    }
+    box.appendChild(d);
+    addDelete(d,key,item.id,()=>renderItems(container,key,title,description));
+  });
+}
+function addDelete(parent,key,id,refresh) {
+  const b=document.createElement("button");b.textContent="Löschen";
+  b.onclick=()=>{
+    write(key,read(key).filter(x=>x.id!==id));refresh();
+  };
+  parent.appendChild(b);
+}
+function resetData() {
+  if(!confirm("Alle gespeicherten Aurora-Daten löschen?"))return;
+  ["aurora_chat","aurora_memory","aurora_tasks",
+   "aurora_creative","aurora_cards","aurora_projects",
+   "aurora_code"].forEach(k=>localStorage.removeItem(k));
+  location.reload();
+}
+renderChat();
 </script>
 </body>
 </html>
